@@ -79,17 +79,12 @@ int main(int argc, char **argv) {
                reg[R_PC] += pc_offset;
 
             }
+
             break;
 
          case OP_JMP:
             r0 = (instr >> 6) & 0x7;
-            if (r0 == 0x7) {
-               reg[R_PC] = reg[R_R7];
-
-            } else {
-               reg[R_PC] = reg[r0];
-
-            }
+            reg[R_PC] = reg[r0];
             break;
 
          case OP_JSR:
@@ -122,22 +117,53 @@ int main(int argc, char **argv) {
             r0 = (instr >> 9) & 0x7;
             r1 = (instr >> 6) & 0x7;
             offset = sign_extend(instr & 0x3f, 6);
+            update_flags(r0);
             break;
+
          case OP_LEA:
-            {LEA, 7}
+            r0 = (instr >> 9) & 0x7;
+            pc_offset = sign_extend(instr & 0x1ff, 9);
+            reg[r0] = reg[R_PC] + pc_offset;
+            update_flags(r0);
             break;
+
          case OP_ST:
-            {ST, 7}
+            r0 = (instr >> 9) & 0x7;
+            pc_offset = sign_extend(instr & 0x1ff, 9);
+            mem_write(reg[R_PC] + pc_offset, reg[r0]);
             break;
+
          case OP_STI:
-            {STI, 7}
+            r0 = (instr >> 9) & 0x7;
+            pc_offset = sign_extend(instr & 0x1ff, 9);
+            mem_write(mem_read(reg[R_PC] + pc_offset), reg[r0]);
             break;
+
          case OP_STR:
-            {STR, 7}
+            r0 = (instr >> 9) & 0x7;
+            r1 = (instr >> 6) & 0x7;
+            offset = sign_extend(instr & 0x3f, 6);
+            mem_write(reg[r1] + offset, reg[r0]);
             break;
+
          case OP_TRAP:
-            {TRAP, 8}
+            switch(instr & 0xff) {
+               case TRAP_GETC:
+                  break;
+               case TRAP_OUT:
+                  break;
+               case TRAP_PUTS:
+                  break;
+               case TRAP_IN:
+                  break;
+               case TRAP_PUTSP:
+                  break;
+               case TRAP_HALT:
+                  break;
+            }
+            
             break;
+
          case OP_RES:
          case OP_RTI:
          default:
