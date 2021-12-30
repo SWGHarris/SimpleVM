@@ -149,25 +149,58 @@ int main(int argc, char **argv) {
          case OP_TRAP:
             switch(instr & 0xff) {
                case TRAP_GETC:
+                  reg[R_R0] = (uint16_t) getchar();
                   break;
+
                case TRAP_OUT:
+                  putc((char) reg[R_R0], stdout);
+                  fflush(stdout);
                   break;
+
                case TRAP_PUTS:
+                  uint16_t *c = memory + reg[R_R0];
+                  while (*c) {
+                     putc((char) *c, stdout);
+                     c++;
+                  }
+                  fflush(stdout);
                   break;
+
                case TRAP_IN:
+                  putc('>', stdout);
+                  fflush(stdout);
+                  reg[R_R0] = (uint16_t) getchar();
+                  putc((char) reg[R_R0], stdout);
+                  fflush(stdout);
                   break;
-               case TRAP_PUTSP:
+
+               case TRAP_PUTSP: 
+                  uint16_t *c = memory + reg[R_R0];
+                  char a;
+                  while (*c) {
+                     a = (*c) & 0xff;
+                     putc(a, stdout);
+                     a = (*c) >> 8;
+                     if (a) {
+                        putc(a, stdout);
+                     }
+                     c++;
+                  }
+                  fflush(stdout);
                   break;
+
                case TRAP_HALT:
+                  printf("HALT\n");
+                  running = 0;
                   break;
+
             }
-            
+
             break;
 
          case OP_RES:
          case OP_RTI:
          default:
-            {BAD OPCODE, 7}
             break;
       }
    }

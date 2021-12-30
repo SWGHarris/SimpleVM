@@ -23,3 +23,25 @@ void update_flags(uint16_t r) {
    }
 
 }
+
+void read_image_file(FILE *file) {
+   /* origin is specified by forst 16 bits of file */
+   uint16_t origin;
+   fread(&origin, sizeof(origin), 1, file);
+   origin = swap16(origin);
+
+
+   uint16_t max_read = UINT16_MAX - origin;
+   uint16_t *p = memory + origin;
+   size_t read = fread(p, sizeof(uint16_t), max_read, file);
+
+   while (read-- > 0) {
+      *p = swap16(*p); /* need bytes in little endian */
+      p++;
+
+   }
+
+}
+
+/* Function: swaps bytes of uint16_t */
+uint16_t swap16(uint16_t x) {return (x << 8) | (x >> 8);}
