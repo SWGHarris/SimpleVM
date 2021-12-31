@@ -9,6 +9,9 @@ int main(int argc, char **argv) {
    uint16_t r0, r1, r2;
    uint16_t imm5, imm_flag;
    uint16_t pc_offset, offset;
+   uint16_t cond;
+   uint16_t *c;
+   char a;
    int i, running;
    enum { PC_START = 0x3000 };
 
@@ -21,7 +24,7 @@ int main(int argc, char **argv) {
 
    for (i = 0; i < argc; i++) {
       if (!read_image(argv[i])) {
-         printf("failed to load image: %\n", argv[i]);
+         printf("failed to load image: %s\n", argv[i]);
          exit(EXIT_FAILURE);
       }
    }
@@ -69,22 +72,16 @@ int main(int argc, char **argv) {
          case OP_NOT:
             r0 = (instr >> 9) & 0x7;
             r1 = (instr >> 6) & 0x7;
-            reg[r0] = ~reg[r1]
+            reg[r0] = ~reg[r1];
             update_flags(r0);
             break;
 
          case OP_BR:
-            uint16_t neg = (instr >> 11) & 0x1;
-            uint16_t zro = (instr >> 10) & 0x1;
-            uint16_t pos = (instr >> 9) & 0x1;
-            uint16_t cond = reg[R_COND];
+            cond = (instr >> 9) & 0x7;
             pc_offset = sign_extend(instr & 0x1ff, 9);
 
-            if ((neg && (cond == FL_NEG))
-                     || (zro && (cond == FL_ZRO))
-                     || (pos && (cond == FL_POS))) {
+            if (cond & reg[R_COND]) {
                reg[R_PC] += pc_offset;
-
             }
 
             break;
@@ -165,7 +162,7 @@ int main(int argc, char **argv) {
                   break;
 
                case TRAP_PUTS:
-                  uint16_t *c = memory + reg[R_R0];
+                  c = memory + reg[R_R0];
                   while (*c) {
                      putc((char) *c, stdout);
                      c++;
@@ -182,8 +179,7 @@ int main(int argc, char **argv) {
                   break;
 
                case TRAP_PUTSP: 
-                  uint16_t *c = memory + reg[R_R0];
-                  char a;
+                  c = memory + reg[R_R0];
                   while (*c) {
                      a = (*c) & 0xff;
                      putc(a, stdout);

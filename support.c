@@ -13,11 +13,12 @@
 
 #include "support.h"
 
-uint16_t sign_extend(uint16_t x, int bit_count);
-void update_flags(uint16_t r);
 void read_image_file(FILE *file);
-int read_image(const char *image_path);
 uint16_t swap16(uint16_t x);
+uint16_t check_key();
+void disable_input_buffering();
+void restore_input_buffering();
+void handle_interrupt(int signal);
 
 /* function: extend x to 16 bits, by preserving sign */
 uint16_t sign_extend(uint16_t x, int bit_count) {

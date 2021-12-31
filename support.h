@@ -1,7 +1,15 @@
 #ifndef HEADER
 #define HEADER
 
-uint16_t memory[UINT16_MAX]; /* memory locations, 65536 total */
+
+uint16_t sign_extend(uint16_t x, int bit_count);
+void update_flags(uint16_t r);
+int read_image(const char *image_path);
+void mem_write(uint16_t address, uint16_t val);
+uint16_t mem_read(uint16_t address);
+
+/* memory locations, 65536 total */
+uint16_t memory[UINT16_MAX];
 
 /* Registers */
 enum {
@@ -18,13 +26,13 @@ enum {
    R_COUNT
 };
 
-uint16_t reg[R_COUNT]
+uint16_t reg[R_COUNT];
 
 /* Memory Mapped Registers */
 enum {
    MR_KBSR = 0xfe00, /* keyboard status */
    MR_KBDR = 0xfe02  /* keyboard data */
-}
+};
 
 /* Opcodes */
 enum {
@@ -51,7 +59,7 @@ enum {
    FL_POS = 1 << 0,
    FL_ZRO = 1 << 1,
    FL_NEG = 1 << 2
-}
+};
 
 /* Trap Codes */
 enum {

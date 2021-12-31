@@ -2,8 +2,8 @@ CC = gcc
 
 all: lc3
 
-lc3: main.o support.o header.o
-	$(CC) -o lc3 main.o support.o header.o
+lc3: main.o support.o
+	$(CC) -o lc3 main.o support.o
 
 main.o: main.c support.h
 	$(CC) -c main.c
