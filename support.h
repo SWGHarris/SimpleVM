@@ -1,3 +1,6 @@
+#ifndef HEADER
+#define HEADER
+
 uint16_t memory[UINT16_MAX]; /* memory locations, 65536 total */
 
 /* Registers */
@@ -16,6 +19,12 @@ enum {
 };
 
 uint16_t reg[R_COUNT]
+
+/* Memory Mapped Registers */
+enum {
+   MR_KBSR = 0xfe00, /* keyboard status */
+   MR_KBDR = 0xfe02  /* keyboard data */
+}
 
 /* Opcodes */
 enum {
@@ -53,3 +62,5 @@ enum {
    TRAP_PUTSP = 0x24,
    TRAP_HALT = 0x25
 };
+
+#endif

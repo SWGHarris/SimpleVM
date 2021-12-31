@@ -1,3 +1,10 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+#include <string.h>
+#include <signal.h>
+#include "support.h"
+
 int main(int argc, char **argv) {
    uint16_t r0, r1, r2;
    uint16_t imm5, imm_flag;
