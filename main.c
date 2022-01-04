@@ -94,12 +94,12 @@ int main(int argc, char **argv) {
          case OP_JSR:
             reg[R_R7] = reg[R_PC];
 
-            if ((instr >> 11) ^ 0x1) {
+            if ((instr >> 11) & 0x1) {
+               pc_offset = sign_extend(instr & 0x7ff, 11);
+               reg[R_PC] += pc_offset;
+            } else {
                r0 = (instr >> 6) & 0x7;
                reg[R_PC] = reg[r0];
-            } else {
-               pc_offset = sign_extend(instr & 0x7ff, 11);
-               reg[R_PC] = pc_offset;
             }
             break;
 
@@ -121,6 +121,7 @@ int main(int argc, char **argv) {
             r0 = (instr >> 9) & 0x7;
             r1 = (instr >> 6) & 0x7;
             offset = sign_extend(instr & 0x3f, 6);
+            reg[r0] = mem_read(reg[r1] + offset);
             update_flags(r0);
             break;
 
@@ -154,6 +155,7 @@ int main(int argc, char **argv) {
             switch(instr & 0xff) {
                case TRAP_GETC:
                   reg[R_R0] = (uint16_t) getchar();
+                  update_flags(R_R0);
                   break;
 
                case TRAP_OUT:
@@ -176,6 +178,7 @@ int main(int argc, char **argv) {
                   reg[R_R0] = (uint16_t) getchar();
                   putc((char) reg[R_R0], stdout);
                   fflush(stdout);
+                  update_flags(R_R0);
                   break;
 
                case TRAP_PUTSP: 
