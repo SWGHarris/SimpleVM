@@ -2,7 +2,7 @@
 A Virtual Machine in C. Executes a binary object file of LC-3 assembly instructions.
 
 The purposes of this project include:
-  - Learn how a basic VM works
+  - Learning how a basic VM works
   - Practicing C language
   - Working with bit operations
   - Gain a better understanding of assembly languages 
